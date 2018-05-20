@@ -2,7 +2,7 @@
 
 ## How to activate
 ### 1'st terminal
-follow the instructions from (https://redis.io/download)
+follow the instructions from https://redis.io/download
 ### 2'nd terminal
 ~~~
 pip3 install -r requirements.txt
