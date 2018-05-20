@@ -6,7 +6,7 @@ follow the instructions from https://redis.io/download
 ### 2'nd terminal
 ~~~
 pip3 install -r requirements.txt
-python3 app.py
+python3 back/app.py
 ~~~
 ### 3'rd terminal
 ~~~
