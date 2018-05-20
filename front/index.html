@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Qq</title>
+    <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
+    <script src="https://unpkg.com/vue-cookies@1.5.5/vue-cookies.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.18.1/moment.js"></script>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.1/css/bootstrap.min.css"
+          integrity="sha384-WskhaSGFgHYWDcbwN70/dfYBj47jz9qbsMId/iRN3ewGhXQFZCSftd1LZCfmhktB" crossorigin="anonymous">
+    <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js"
+            integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo"
+            crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.3/umd/popper.min.js"
+            integrity="sha384-ZMP7rVo3mIykV+2+9J3UJ46jBk0WLaUAdn689aCwoqbBJiSnjAK/l8WvCWPIPm49"
+            crossorigin="anonymous"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.1.1/js/bootstrap.min.js"
+            integrity="sha384-smHYKdLADwkXOn1EmN1qk/HfnUcbVRZyYmZ4qpPea6sjB/pTJ0euyQp0Mk8ck+5T"
+            crossorigin="anonymous"></script>
+    <link rel="stylesheet" href="/index.css">
+</head>
+<body>
+<div id="app">
+
+    <nav class="navbar navbar-expand-lg navbar-light bg-light">
+
+        <a class="navbar-brand" href="">Chat</a>
+        <div class="collapse navbar-collapse" id="navbarSupportedContent">
+
+            <ul class="navbar-nav mr-auto" v-if="!auth">
+                <li class="nav-item" :class="{active: activity==='log'}">
+                    <span class="nav-link" @click="activity = 'log'; login=''; pass='';">Sign in</span>
+                </li>
+                <li class="nav-item" :class="{active: activity==='reg'}">
+                    <span class="nav-link" @click="activity = 'reg'; login=''; pass='';">Sign up</span>
+                </li>
+            </ul>
+            <ul class="navbar-nav mr-auto" v-if="auth">
+            </ul>
+            <form class="form-inline my-2 my-lg-0" v-if="auth">
+                <span style="margin-right: 5px;">User: {{username}}</span>
+                <div class="btn btn-sm btn-outline-secondary my-2 my-sm-0" @click="logout">Sign out</div>
+            </form>
+        </div>
+    </nav>
+
+    <div class="container">
+        <form v-if="activity === 'reg'">
+            <div class="form-group mt-2">
+                <label for="mlog">Username</label>
+                <input class="form-control" id="mlog" type="text" v-model.trim="login" placeholder="Login">
+                <small class="form-text text-danger">{{errorLogin}}</small>
+            </div>
+            <div class="form-group">
+                <label for="mpas">Password</label>
+                <input class="form-control" id="mpas" type="password" v-model.trim="pass" placeholder="Password">
+                <small class="form-text text-danger">{{errorPassword}}</small>
+            </div>
+            <button @click="register" class="btn btn-primary">Sign up</button>
+        </form>
+
+        <form v-if="activity === 'log'">
+            <div class="form-group mt-2">
+                <label for="mlog">Username</label>
+                <input class="form-control" id="mlog" type="text" v-model.trim="login" placeholder="Login">
+                <small class="form-text text-danger">{{errorLogin}}</small>
+            </div>
+            <div class="form-group">
+                <label for="mpas">Password</label>
+                <input class="form-control" id="mpas" type="password" v-model.trim="pass" placeholder="Password">
+                <small class="form-text text-danger">{{errorPassword}}</small>
+            </div>
+            <button @click="mlogin" class="btn btn-primary">Sign in</button>
+        </form>
+
+    </div>
+
+    <div v-if="activity === 'auth'" class="h-100 up">
+        <div class="row h-100">
+            <div class="col-3 chats h-100">
+                <div v-for="chat in schats" class="chat-item align-baseline"
+                     :class="{mnew: chat.new, current: chat.name == current}"
+                     @click="setCurrent(chat)">
+                    <div class="chat-item-pd">
+                        <span>{{chat.name}}</span>
+                        <span class="text-success small" v-if="chat.online">online</span>
+                        <span class="text-danger small" v-else>offline</span>
+                        <br>
+                        <div v-if="chat.lastMessage" class="text-secondary">
+                            {{chat.lastMessage.sender}}: {{chat.lastMessage.text}}
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col h-100">
+                <div class="filler h-100 row justify-content-center" v-if="current === ''">
+                    <span class="text-secondary align-self-center">Please select a dialog</span>
+                </div>
+                <div class="active row h-100 align-items-end" v-else>
+
+                    <div class="messages row align-items-end mb-1" id="mess">
+                        <div class="cont">
+                            <div class="message row" v-for="message in currentMessages">
+                                <div class="col-10">
+                                    <div class="text-primary mm">
+                                        {{message.sender}}
+                                    </div>
+                                    {{message.text}}
+                                </div>
+                                <div class="col text-secondary small">{{message.time}}</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <form class="fsz">
+                        <div class="form-row align-items-center">
+                            <div class="col-11">
+                                <input type="text" class="form-control mb-2" id="inlineFormInput"
+                                       placeholder="Your message" v-model="message">
+                            </div>
+                            <div class="col-1">
+                                <button class="btn btn-primary mb-2 fsbtn" @click="sendMessage">Send</button>
+                            </div>
+                        </div>
+                    </form>
+
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<script src="/index.js"></script>
+</body>
+</html>
