@@ -1,0 +1,26 @@
+version: '2'  
+services:  
+  back:
+    build:
+      context: ./back
+    depends_on:
+      - redis
+    environment:
+      - REDIS_HOST=redis
+    ports:
+      - "8000:8000"
+  front:
+    build:
+      context: ./front
+    depends_on:
+      - back
+    environment:
+      - HOST=back
+    ports:
+      - "3000:80"
+  redis:
+    image: redis:3.2-alpine
+    volumes:
+      - redis_data:/data
+volumes:  
+  redis_data:

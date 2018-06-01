@@ -10,7 +10,7 @@ import hashlib
 from datetime import datetime
 import base64
 
-r = tornadis.Client(host="localhost", port=6379, autoconnect=True, db=2)
+r = tornadis.Client(host="redis", port=6379, autoconnect=True, db=2)
 FRONT_DOMAIN = '127.0.0.1:3000'
 
 
@@ -252,7 +252,7 @@ class ChatSocketHandler(WebSocketHandler):
     @authenticated_async
     @gen.coroutine
     def listen(self):
-        self.client = tornadis.PubSubClient(host="localhost", port=6379, autoconnect=True, db=2)
+        self.client = tornadis.PubSubClient(host="redis", port=6379, autoconnect=True, db=2)
         q = yield self.client.pubsub_subscribe("registered")
         while True:
             msg = yield self.client.pubsub_pop_message()

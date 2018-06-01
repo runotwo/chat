@@ -64,7 +64,7 @@ var app = new Vue({
                 this.errorPassword = 'Password must be longer than 2 characters and shorter than 11';
             }
             else {
-                axios.post('http://localhost:8000/registration', {
+                axios.post('back:8000/registration', {
                     login: this.login,
                     password: this.pass,
                 },)
@@ -97,7 +97,7 @@ var app = new Vue({
                 this.errorPassword = 'Password must be longer than 2 characters and shorter than 11';
             }
             else {
-                axios.post('http://localhost:8000/login', {
+                axios.post('back:8000/login', {
                     login: this.login,
                     password: this.pass,
                 },)
@@ -114,7 +114,7 @@ var app = new Vue({
                         console.log(error);
                     })
                     .then(function () {
-                        axios.get('http://localhost:8000', {
+                        axios.get('back:8000', {
                             params: {
                                 user: Vue.cookies.get('user')
                             }
@@ -141,7 +141,7 @@ var app = new Vue({
         logout: function () {
             self = this;
             Vue.cookies.remove('user');
-            axios.get('http://localhost:8000', {
+            axios.get('back:8000', {
                 params: {
                     user: Vue.cookies.get('user')
                 }
@@ -195,7 +195,7 @@ var app = new Vue({
     },
     created: function () {
         self = this;
-        axios.get('http://localhost:8000', {
+        axios.get('back:8000', {
             params: {
                 user: Vue.cookies.get('user')
             }
