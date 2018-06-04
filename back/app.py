@@ -267,8 +267,8 @@ class ChatSocketHandler(WebSocketHandler):
 def make_app():
     settings = {
         'cookie_secret': 'Hsdfk2rhfFFGJwefuofjwejf234FJWFN',
-        'login_url': '/login',
-        'xsrf_cookies': False,
+        'xsrf_cookies': False,        
+	'login_url': '/login',
         'debug': False
     }
 
